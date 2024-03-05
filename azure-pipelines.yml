@@ -3,7 +3,13 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- main
+    branches:
+      include:
+      - main
+    paths:
+      include:
+      - Shopping/Shopping.API/*
+      - aks/shoppingapi.yaml
 
 resources:
 - repo: self
@@ -11,21 +17,21 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'a846c184-13ba-4b62-9dfe-e9ace31d2670'
-  imageRepository: 'arnabtecshopping'
+  dockerRegistryServiceConnection: 'e2bd5050-0b04-449c-8cd9-9367bbf7b47e'
+  imageRepository: 'shoppingapi'
   containerRegistry: 'shoppingacrarnab.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
+  dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
   tag: '$(Build.BuildId)'
-  imagePullSecret: 'shoppingacrarnab1442e28b-auth'
+  imagePullSecret: 'shoppingacr20662ab5-auth'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
-
+  
 
 stages:
 - stage: Build
   displayName: Build stage
-  jobs:
+  jobs:  
   - job: Build
     displayName: Build
     pool:
@@ -38,11 +44,12 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: $(Build.SourcesDirectory)/Shopping
         tags: |
           $(tag)
-
-    - upload: manifests
-      artifact: manifests
+          
+    - upload: aks
+      artifact: aks
 
 - stage: Deploy
   displayName: Deploy stage
@@ -53,7 +60,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'arnabtecshopping-1868.default'
+    environment: 'aspnetrunrundevops.default'
     strategy:
       runOnce:
         deploy:
@@ -64,14 +71,13 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
+              
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/aks/shoppingapi.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
