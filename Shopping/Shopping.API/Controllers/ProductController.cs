@@ -21,7 +21,10 @@ namespace Shopping.API.Controllers
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            
         }
+
 
         [HttpGet]
         public async Task<IEnumerable<Product>> Get()

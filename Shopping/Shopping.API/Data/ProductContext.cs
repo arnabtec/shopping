@@ -40,7 +40,7 @@ namespace Shopping.API.Data
                     Description = "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
                     ImageFile = "product-1.png",
                     Price = 950.00M,
-                    Category = "Smart Phone"
+                    Category = "Smart Phone-Apple"
                 },
                 new Product()
                 {
@@ -48,7 +48,7 @@ namespace Shopping.API.Data
                     Description = "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
                     ImageFile = "product-2.png",
                     Price = 840.00M,
-                    Category = "Smart Phone"
+                    Category = "Smart Phone Samsung"
                 },
                 new Product()
                 {
