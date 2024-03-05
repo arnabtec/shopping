@@ -61,7 +61,7 @@ stages:
     pool:
     
       vmImage: $(vmImageName)
-    environment: 'aspnetrunrundevops.default'
+    environment: 'arnabtecshopping'
     strategy:
       runOnce:
         deploy:
