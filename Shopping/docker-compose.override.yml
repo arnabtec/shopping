@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  shopping.api:
+    container_name: shoppingapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://shoppingdb:27017"
+    depends_on:
+      - shopping.db
+    ports:
+      - "8000:80"
+   
+  # catalog-api:
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=http://0.0.0.0:80
+  #     - ConnectionString=${ESHOP_AZURE_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=[PLACEHOLDER]}
+  #     - PicBaseUrl=${ESHOP_AZURE_STORAGE_CATALOG_URL:-http://host.docker.internal:5202/api/v1/catalog/items/[0]/pic/}
+  #     - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+  #     - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+  #     - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+  #     - AzureStorageAccountName=${ESHOP_AZURE_STORAGE_CATALOG_NAME}
+  #     - AzureStorageAccountKey=${ESHOP_AZURE_STORAGE_CATALOG_KEY}
+  #     - UseCustomizationData=True
+  #     - AzureServiceBusEnabled=False
+  #     - AzureStorageEnabled=False
+  #     - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+  #     - OrchestratorType=${ORCHESTRATOR_TYPE}
+  #   ports:
+  #     - "5101:80"
+
+  shopping.client:
+    container_name: shoppingclient
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+      - "ShoppingAPIUrl=http://shoppingapi"
+    depends_on:
+      - shopping.db
+      - shopping.api
+    ports:
+      - "8001:80"
+
+  shopping.db:
+    container_name: shoppingdb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${WEBAPP_STORAGE_HOME}/site:/data/db
