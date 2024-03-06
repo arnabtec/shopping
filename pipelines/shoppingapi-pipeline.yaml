@@ -18,6 +18,7 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '5976d0cb-cc0d-4fde-bba9-8c90d109b2b5'
+  kubernetesServiceConnection: 'eaa6151b-19eb-4f1a-88a2-c6f2f02a6f9f'
   imageRepository: 'shoppingapi'
   containerRegistry: 'shoppingacrarnab.azurecr.io'
   dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
@@ -71,6 +72,7 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              kubernetesServiceConnection: $(kubernetesServiceConnection)
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
